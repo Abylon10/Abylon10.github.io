@@ -96,6 +96,13 @@
     .certs h3 { font-size: 16px; font-weight: 600; }
     .certs .issuer { color: var(--muted); font-size: 14px; grid-column: 1; }
     .certs .date { color: var(--faint); font-size: 13px; font-family: "JetBrains Mono", monospace; grid-row: 1; grid-column: 2; white-space: nowrap; }
+    .certs .thumb { grid-column: 1 / -1; margin-top: 10px; display: block; max-width: 420px; }
+    .certs .thumb img {
+      width: 100%; height: auto; display: block;
+      border: 1px solid var(--border); border-radius: 8px;
+      transition: border-color .15s;
+    }
+    .certs .thumb:hover img { border-color: var(--accent); }
 
     .about { display: grid; gap: 32px; grid-template-columns: 1.4fr 1fr; }
     .about p { color: var(--muted); margin-bottom: 14px; }
@@ -207,16 +214,19 @@
         <h3>Thesis Preparation with the Use of Trending Tools and Industry Practices</h3>
         <span class="date">Oct 2025</span>
         <span class="issuer">Biliran Province State University, Computer Science Society · Seminar-Workshop</span>
+        <a class="thumb" href="certs/thesis-prep-2025.jpg"><img src="certs/thesis-prep-2025.jpg" alt="Certificate of Completion: Thesis Preparation with the Use of Trending Tools and Industry Practices" loading="lazy"></a>
       </li>
       <li>
         <h3>Mastering English Foundations, Upholding Academic Integrity, and Advancing Gender-Fair Writing</h3>
         <span class="date">Apr 2025</span>
-        <span class="issuer">Seminar-Workshop · Certificate of Completion</span>
+        <span class="issuer">Biliran Province State University, Computer Science Society · Seminar-Workshop</span>
+        <a class="thumb" href="certs/english-seminar-2025.jpg"><img src="certs/english-seminar-2025.jpg" alt="Certificate of Completion: Mastering English Foundations, Upholding Academic Integrity, and Advancing Gender-Fair Writing" loading="lazy"></a>
       </li>
       <li>
-        <h3>Digital Wellness: Connect Smarter, Stay Safer</h3>
+        <h3>Unplug &amp; Unwind: Redefining Digital Connection and Safe Spaces</h3>
         <span class="date">Feb 2024</span>
-        <span class="issuer">Biliran Province State University · Seminar</span>
+        <span class="issuer">Biliran Province State University, Computer Science Society · Certificate of Participation</span>
+        <a class="thumb" href="certs/digital-wellness-2024.jpg"><img src="certs/digital-wellness-2024.jpg" alt="Certificate of Participation: Unplug &amp; Unwind: Redefining Digital Connection and Safe Spaces" loading="lazy"></a>
       </li>
     </ul>
   </section>
