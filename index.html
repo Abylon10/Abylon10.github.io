@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Abylon — Portfolio</title>
+  <meta name="description" content="Projects by Abylon: GIS, mobile apps, games and systems programming.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fafaf9;
+      --surface: #ffffff;
+      --text: #1c1917;
+      --muted: #57534e;
+      --faint: #a8a29e;
+      --border: #e7e5e4;
+      --accent: #2563eb;
+      --accent-soft: #eff6ff;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0c0a09;
+        --surface: #1c1917;
+        --text: #f5f5f4;
+        --muted: #a8a29e;
+        --faint: #78716c;
+        --border: #292524;
+        --accent: #60a5fa;
+        --accent-soft: #172554;
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, system-ui, sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 0 20px; }
+
+    nav {
+      position: sticky; top: 0; z-index: 10;
+      background: color-mix(in srgb, var(--bg) 85%, transparent);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    nav .wrap { display: flex; justify-content: space-between; align-items: center; height: 56px; }
+    nav .logo { font-weight: 700; color: var(--text); }
+    nav ul { display: flex; gap: 20px; list-style: none; font-size: 14px; }
+    nav ul a { color: var(--muted); }
+
+    header { padding: 96px 0 72px; }
+    .eyebrow { font-family: "JetBrains Mono", monospace; font-size: 13px; color: var(--accent); margin-bottom: 12px; }
+    h1 { font-size: clamp(36px, 6vw, 52px); line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 20px; }
+    .lead { font-size: 18px; color: var(--muted); max-width: 600px; margin-bottom: 32px; }
+    .btns { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn {
+      display: inline-block; padding: 10px 18px; border-radius: 8px;
+      font-size: 14px; font-weight: 500; border: 1px solid var(--border); color: var(--text);
+    }
+    .btn.primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+    .btn:hover { text-decoration: none; opacity: .85; }
+
+    section { padding: 56px 0; border-top: 1px solid var(--border); }
+    h2 { font-size: 13px; font-family: "JetBrains Mono", monospace; font-weight: 500;
+         text-transform: uppercase; letter-spacing: .08em; color: var(--faint); margin-bottom: 28px; }
+
+    .projects { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+    .card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 22px; display: flex; flex-direction: column; gap: 10px;
+      transition: border-color .15s, transform .15s;
+    }
+    .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .card.featured { grid-column: 1 / -1; }
+    .card .kind { font-size: 12px; color: var(--faint); font-family: "JetBrains Mono", monospace; }
+    .card h3 { font-size: 18px; letter-spacing: -0.01em; }
+    .card p { color: var(--muted); font-size: 15px; flex: 1; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag { font-size: 12px; padding: 2px 9px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
+    .card .links { font-size: 14px; font-weight: 500; }
+
+    .about { display: grid; gap: 32px; grid-template-columns: 1.4fr 1fr; }
+    .about p { color: var(--muted); margin-bottom: 14px; }
+    .skills h3 { font-size: 14px; margin-bottom: 8px; }
+    .skills ul { list-style: none; margin-bottom: 18px; display: flex; flex-wrap: wrap; gap: 6px; }
+    .skills li { font-size: 13px; padding: 3px 10px; border: 1px solid var(--border); border-radius: 6px; color: var(--muted); }
+
+    .contact p { color: var(--muted); margin-bottom: 20px; max-width: 520px; }
+    footer { padding: 32px 0 48px; color: var(--faint); font-size: 13px; border-top: 1px solid var(--border); }
+
+    @media (max-width: 640px) {
+      nav ul { gap: 14px; }
+      header { padding: 64px 0 48px; }
+      .about { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="logo" href="#">Abylon</a>
+    <ul>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="wrap">
+  <header>
+    <p class="eyebrow">Hi, I'm</p>
+    <!-- TODO: replace with your full name -->
+    <h1>[Your Name]</h1>
+    <!-- TODO: edit this one-line intro -->
+    <p class="lead">Computer Science student building GIS tools, mobile apps, games and the occasional distributed-systems experiment.</p>
+    <div class="btns">
+      <a class="btn primary" href="#projects">See my work</a>
+      <a class="btn" href="https://github.com/Abylon10">GitHub</a>
+    </div>
+  </header>
+
+  <section id="projects">
+    <h2>Projects</h2>
+    <div class="projects">
+
+      <article class="card featured">
+        <span class="kind">Thesis · Web GIS</span>
+        <h3>Biliran GIS</h3>
+        <p>A web-based geographic information system for Biliran province, built as my thesis project. It maps flood susceptibility per barangay and connects to a Supabase backend with email notifications.</p>
+        <div class="tags"><span class="tag">Next.js</span><span class="tag">TypeScript</span><span class="tag">Supabase</span><span class="tag">Tailwind CSS</span><span class="tag">Resend</span></div>
+        <div class="links"><a href="https://github.com/Abylon10/BILIRAN-GIS">View on GitHub →</a></div>
+      </article>
+
+      <article class="card">
+        <span class="kind">Geospatial · Data pipeline</span>
+        <h3>Flood Susceptibility Index Pipeline</h3>
+        <p>Python scripts that compute a weighted flood susceptibility index from HAND, TWI, land cover and rainfall rasters, then aggregate the results by barangay and watershed.</p>
+        <div class="tags"><span class="tag">Python</span><span class="tag">GeoTIFF</span><span class="tag">GeoJSON</span><span class="tag">Hydrology</span></div>
+      </article>
+
+      <article class="card">
+        <span class="kind">Mobile app · Group project</span>
+        <h3>Community Connect</h3>
+        <p>A mobile app for discovering local community events and announcements in Naval, Biliran. Built with Expo Router for iOS, Android and web.</p>
+        <div class="tags"><span class="tag">React Native</span><span class="tag">Expo</span><span class="tag">TypeScript</span></div>
+        <div class="links"><a href="https://github.com/Abylon10/COM_NECT">View on GitHub →</a></div>
+      </article>
+
+      <article class="card">
+        <span class="kind">Game dev</span>
+        <h3>Gardenbound</h3>
+        <p>A Roblox game about farming, pets, alchemy, forging and dungeon combat across multiple islands, with the code managed in Git and synced to Studio with Rojo.</p>
+        <div class="tags"><span class="tag">Luau</span><span class="tag">Roblox</span><span class="tag">Rojo</span></div>
+        <div class="links"><a href="https://github.com/Abylon10/gardenbound">View on GitHub →</a></div>
+      </article>
+
+      <article class="card">
+        <span class="kind">Parallel computing</span>
+        <h3>Parallel CSV Filter</h3>
+        <p>Divide-and-conquer filtering of CSV files with up to 10 million rows, using a process pool across all CPU cores and benchmarked against a serial version.</p>
+        <div class="tags"><span class="tag">Python</span><span class="tag">multiprocessing</span><span class="tag">Benchmarking</span></div>
+      </article>
+
+      <article class="card">
+        <span class="kind">Distributed systems</span>
+        <h3>RPC Demo</h3>
+        <p>A small remote procedure call system built from raw sockets: a threaded server, client stubs, JSON marshalling and logging middleware, explained with a restaurant analogy.</p>
+        <div class="tags"><span class="tag">Python</span><span class="tag">Sockets</span><span class="tag">JSON</span><span class="tag">Threading</span></div>
+      </article>
+
+    </div>
+  </section>
+
+  <section id="about">
+    <h2>About</h2>
+    <div class="about">
+      <div>
+        <!-- TODO: write your own bio -->
+        <p>[A few sentences about you: where you study, what you enjoy building, and what you're looking for next.]</p>
+        <p>[Something personal: a hobby, what got you into programming, or what you're learning right now.]</p>
+      </div>
+      <div class="skills">
+        <h3>Languages</h3>
+        <ul><li>TypeScript</li><li>JavaScript</li><li>Python</li><li>Luau</li></ul>
+        <h3>Frameworks &amp; tools</h3>
+        <ul><li>Next.js</li><li>React Native</li><li>Expo</li><li>Tailwind CSS</li><li>Supabase</li><li>Git</li></ul>
+        <h3>Interests</h3>
+        <ul><li>GIS</li><li>Mobile</li><li>Game dev</li><li>Parallel &amp; distributed systems</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <h2>Contact</h2>
+    <p>Open to internships, collaborations and freelance work. The best way to reach me is email.</p>
+    <div class="btns">
+      <!-- TODO: put your real email and LinkedIn URL here -->
+      <a class="btn primary" href="mailto:you@example.com">Email me</a>
+      <a class="btn" href="https://github.com/Abylon10">GitHub</a>
+      <a class="btn" href="https://www.linkedin.com/in/your-profile">LinkedIn</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">© 2026 [Your Name] · Hosted on GitHub Pages</div>
+</footer>
+
+</body>
+</html>
