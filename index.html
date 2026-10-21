@@ -7,29 +7,37 @@
   <meta name="description" content="Projects by Justin Dave A. Monsales: GIS, mobile apps, games and systems programming.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    // Apply the saved theme before first paint to avoid a flash.
+    try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
   <style>
     :root {
-      --bg: #fafaf9;
-      --surface: #ffffff;
-      --text: #1c1917;
-      --muted: #57534e;
-      --faint: #a8a29e;
-      --border: #e7e5e4;
-      --accent: #2563eb;
-      --accent-soft: #eff6ff;
+      --bg: #05060f;
+      --surface: rgba(17, 20, 38, .72);
+      --surface-solid: #0e1124;
+      --text: #eef0f8;
+      --muted: #9ba1b8;
+      --border: rgba(255, 255, 255, .09);
+      --accent: #8b5cf6;
+      --accent-2: #a78bfa;
+      --accent-glow: rgba(139, 92, 246, .45);
+      --star: 255, 255, 255;
+      --nav-bg: rgba(5, 6, 15, .7);
     }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #0c0a09;
-        --surface: #1c1917;
-        --text: #f5f5f4;
-        --muted: #a8a29e;
-        --faint: #78716c;
-        --border: #292524;
-        --accent: #60a5fa;
-        --accent-soft: #172554;
-      }
+    :root[data-theme="light"] {
+      --bg: #f5f6fb;
+      --surface: rgba(255, 255, 255, .85);
+      --surface-solid: #ffffff;
+      --text: #14162b;
+      --muted: #5b6078;
+      --border: rgba(20, 22, 43, .1);
+      --accent: #7c3aed;
+      --accent-2: #6d28d9;
+      --accent-glow: rgba(124, 58, 237, .3);
+      --star: 124, 58, 237;
+      --nav-bg: rgba(245, 246, 251, .8);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -39,231 +47,596 @@
       font-family: Inter, system-ui, sans-serif;
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      transition: background .3s, color .3s;
     }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .wrap { max-width: 880px; margin: 0 auto; padding: 0 20px; }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+    .accent { color: var(--accent-2); }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; position: relative; }
 
+    #stars { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+
+    /* ---------- nav ---------- */
     nav {
-      position: sticky; top: 0; z-index: 10;
-      background: color-mix(in srgb, var(--bg) 85%, transparent);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--border);
+      position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+      transition: background .3s, border-color .3s;
+      border-bottom: 1px solid transparent;
     }
-    nav .wrap { display: flex; justify-content: space-between; align-items: center; height: 56px; }
-    nav .logo { font-weight: 700; color: var(--text); }
-    nav ul { display: flex; gap: 20px; list-style: none; font-size: 14px; }
-    nav ul a { color: var(--muted); }
+    nav.scrolled { background: var(--nav-bg); backdrop-filter: blur(12px); border-color: var(--border); }
+    nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+    .logo { font-weight: 800; font-size: 19px; letter-spacing: -.01em; }
+    .logo span { color: var(--accent-2); }
+    .links { display: flex; gap: 30px; list-style: none; font-size: 15px; }
+    .links a { color: var(--muted); transition: color .2s; }
+    .links a:hover { color: var(--accent-2); }
+    .nav-right { display: flex; align-items: center; gap: 8px; }
+    .icon-btn {
+      width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer;
+      background: transparent; color: var(--text); display: grid; place-items: center;
+    }
+    .icon-btn:hover { background: var(--border); }
+    .icon-btn svg { width: 20px; height: 20px; }
+    .theme-btn .moon { display: none; }
+    :root[data-theme="light"] .theme-btn .sun { display: none; }
+    :root[data-theme="light"] .theme-btn .moon { display: block; }
+    .menu-btn { display: none; }
 
-    header { padding: 96px 0 72px; }
-    .eyebrow { font-family: "JetBrains Mono", monospace; font-size: 13px; color: var(--accent); margin-bottom: 12px; }
-    h1 { font-size: clamp(36px, 6vw, 52px); line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 20px; }
-    .lead { font-size: 18px; color: var(--muted); max-width: 600px; margin-bottom: 32px; }
-    .btns { display: flex; gap: 12px; flex-wrap: wrap; }
+    /* ---------- hero ---------- */
+    .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 100px 0 60px; }
+    .avatar {
+      width: 150px; height: 150px; margin: 0 auto 28px; border-radius: 50%; position: relative;
+      padding: 4px; background: linear-gradient(135deg, var(--accent), #22d3ee);
+      box-shadow: 0 0 40px var(--accent-glow);
+      animation: fade-up .8s ease both;
+    }
+    .avatar img, .avatar .initials {
+      width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+      background: var(--surface-solid); border: 4px solid var(--bg);
+    }
+    .avatar .initials {
+      display: none; place-items: center; font-size: 48px; font-weight: 800; color: var(--accent-2);
+    }
+    .avatar.no-photo img { display: none; }
+    .avatar.no-photo .initials { display: grid; }
+    .hero h1 {
+      font-size: clamp(38px, 7vw, 68px); font-weight: 800; line-height: 1.1; letter-spacing: -.03em;
+      margin-bottom: 20px; animation: fade-up .8s .15s ease both;
+    }
+    .hero p { font-size: clamp(16px, 2.2vw, 19px); color: var(--muted); max-width: 620px; margin: 0 auto 36px; animation: fade-up .8s .3s ease both; }
+    .hero .btn { animation: fade-up .8s .45s ease both; }
+    .scroll-hint {
+      position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+      color: var(--muted); font-size: 13px; display: flex; flex-direction: column; align-items: center; gap: 6px;
+      animation: bob 2s ease-in-out infinite;
+    }
+    .scroll-hint svg { width: 20px; height: 20px; }
+
     .btn {
-      display: inline-block; padding: 10px 18px; border-radius: 8px;
-      font-size: 14px; font-weight: 500; border: 1px solid var(--border); color: var(--text);
+      display: inline-flex; align-items: center; gap: 8px; padding: 12px 26px; border-radius: 999px;
+      font-weight: 600; font-size: 15px; cursor: pointer; transition: transform .2s, box-shadow .2s, background .2s;
+      border: 1px solid transparent;
     }
-    .btn.primary { background: var(--text); color: var(--bg); border-color: var(--text); }
-    .btn:hover { text-decoration: none; opacity: .85; }
+    .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 0 22px var(--accent-glow); }
+    .btn-primary:hover { transform: scale(1.05); box-shadow: 0 0 34px var(--accent-glow); }
+    .btn-outline { border-color: var(--accent); color: var(--accent-2); }
+    .btn-outline:hover { background: rgba(139, 92, 246, .12); }
 
-    section { padding: 56px 0; border-top: 1px solid var(--border); }
-    h2 { font-size: 13px; font-family: "JetBrains Mono", monospace; font-weight: 500;
-         text-transform: uppercase; letter-spacing: .08em; color: var(--faint); margin-bottom: 28px; }
-
-    .projects { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+    /* ---------- sections ---------- */
+    section { padding: 96px 0; }
+    .section-title { text-align: center; font-size: clamp(30px, 4.5vw, 42px); font-weight: 800; letter-spacing: -.02em; margin-bottom: 14px; }
+    .section-sub { text-align: center; color: var(--muted); max-width: 600px; margin: 0 auto 52px; }
     .card {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
-      padding: 22px; display: flex; flex-direction: column; gap: 10px;
-      transition: border-color .15s, transform .15s;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+      backdrop-filter: blur(6px); transition: transform .25s, box-shadow .25s, border-color .25s;
     }
-    .card:hover { border-color: var(--accent); transform: translateY(-2px); }
-    .card.featured { grid-column: 1 / -1; }
-    .card .kind { font-size: 12px; color: var(--faint); font-family: "JetBrains Mono", monospace; }
-    .card h3 { font-size: 18px; letter-spacing: -0.01em; }
-    .card p { color: var(--muted); font-size: 15px; flex: 1; }
+    .card:hover { transform: translateY(-4px); border-color: rgba(139, 92, 246, .45); box-shadow: 0 12px 34px rgba(0, 0, 0, .25), 0 0 0 1px rgba(139, 92, 246, .15); }
+
+    /* about */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+    .about-text h3 { font-size: 24px; margin-bottom: 18px; }
+    .about-text p { color: var(--muted); margin-bottom: 16px; font-size: 16.5px; }
+    .about-text .btns { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+    .features { display: grid; gap: 16px; }
+    .feature { display: flex; gap: 16px; padding: 22px; text-align: left; }
+    .feature .ico {
+      flex: none; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center;
+      background: rgba(139, 92, 246, .14); color: var(--accent-2);
+    }
+    .feature .ico svg { width: 22px; height: 22px; }
+    .feature h4 { font-size: 17px; margin-bottom: 4px; }
+    .feature p { color: var(--muted); font-size: 14.5px; }
+
+    /* skills */
+    .filters { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-bottom: 36px; }
+    .filters button {
+      padding: 8px 20px; border-radius: 999px; border: none; cursor: pointer; font: inherit; font-size: 14px;
+      background: var(--surface); color: var(--muted); border: 1px solid var(--border);
+    }
+    .filters button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px; }
+    .skill { padding: 20px; text-align: center; }
+    .skill b { display: block; font-size: 16px; }
+    .skill span { color: var(--muted); font-size: 13px; }
+    .skill[hidden] { display: none; }
+
+    /* projects */
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+    .project { overflow: hidden; display: flex; flex-direction: column; }
+    .cover { aspect-ratio: 16 / 9; overflow: hidden; position: relative; }
+    .cover img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+    .project:hover .cover img, .project:hover .cover .art { transform: scale(1.06); }
+    .art {
+      width: 100%; height: 100%; display: grid; place-items: center; transition: transform .5s;
+      color: rgba(255, 255, 255, .92);
+    }
+    .art svg { width: 64px; height: 64px; filter: drop-shadow(0 4px 14px rgba(0, 0, 0, .3)); }
+    .art-gis { background: radial-gradient(circle at 30% 30%, #22d3ee, transparent 55%), linear-gradient(135deg, #0e7490, #1e3a8a); }
+    .art-fsi { background: radial-gradient(circle at 70% 30%, #60a5fa, transparent 55%), linear-gradient(135deg, #1e40af, #312e81); }
+    .art-mobile { background: radial-gradient(circle at 30% 70%, #f472b6, transparent 55%), linear-gradient(135deg, #7c3aed, #be185d); }
+    .art-par { background: radial-gradient(circle at 70% 70%, #34d399, transparent 55%), linear-gradient(135deg, #047857, #1e3a8a); }
+    .art-rpc { background: radial-gradient(circle at 30% 30%, #fbbf24, transparent 55%), linear-gradient(135deg, #b45309, #6d28d9); }
+    .project .body { padding: 22px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
     .tags { display: flex; flex-wrap: wrap; gap: 6px; }
-    .tag { font-size: 12px; padding: 2px 9px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
-    .card .links { font-size: 14px; font-weight: 500; }
+    .tag { font-size: 12px; padding: 3px 11px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); }
+    .project h3 { font-size: 19px; }
+    .project p { color: var(--muted); font-size: 14.5px; flex: 1; }
+    .project .links-row { display: flex; gap: 14px; }
+    .project .links-row a { color: var(--muted); display: inline-flex; align-items: center; gap: 6px; font-size: 14px; transition: color .2s; }
+    .project .links-row a:hover { color: var(--accent-2); }
+    .project .links-row svg { width: 18px; height: 18px; }
+    .project .note { font-size: 13px; color: var(--muted); opacity: .75; }
+    .center { text-align: center; margin-top: 44px; }
 
-    .certs { list-style: none; }
-    .certs li {
-      display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; align-items: baseline;
-      padding: 16px 0; border-bottom: 1px solid var(--border);
+    /* certificates */
+    .certs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+    .cert { overflow: hidden; cursor: zoom-in; text-align: left; font: inherit; color: inherit; padding: 0; }
+    .cert .cover { aspect-ratio: 1.414 / 1; background: #fff; }
+    .cert .cover img { object-fit: contain; }
+    .cert .body { padding: 18px 20px 20px; }
+    .cert h3 { font-size: 16px; line-height: 1.4; margin-bottom: 6px; }
+    .cert .meta { color: var(--muted); font-size: 13.5px; }
+    .cert .verify { color: var(--accent-2); font-size: 13.5px; font-weight: 500; display: inline-block; margin-top: 8px; }
+    .cert .verify:hover { text-decoration: underline; }
+    dialog {
+      border: none; background: transparent; max-width: min(1100px, 94vw); max-height: 92vh; margin: auto; padding: 0;
     }
-    .certs li:first-child { padding-top: 0; }
-    .certs li:last-child { border-bottom: none; }
-    .certs h3 { font-size: 16px; font-weight: 600; }
-    .certs .issuer { color: var(--muted); font-size: 14px; grid-column: 1; }
-    .certs .date { color: var(--faint); font-size: 13px; font-family: "JetBrains Mono", monospace; grid-row: 1; grid-column: 2; white-space: nowrap; }
-    .certs .thumb { grid-column: 1 / -1; margin-top: 10px; display: block; max-width: 420px; }
-    .certs .thumb img {
-      width: 100%; height: auto; display: block;
-      border: 1px solid var(--border); border-radius: 8px;
-      transition: border-color .15s;
+    dialog::backdrop { background: rgba(3, 4, 12, .85); backdrop-filter: blur(4px); }
+    dialog img { border-radius: 10px; max-height: 88vh; width: auto; margin: 0 auto; }
+    dialog .close { position: fixed; top: 16px; right: 16px; color: #fff; background: rgba(255, 255, 255, .12); }
+
+    /* contact */
+    .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; max-width: 720px; margin: 0 auto; }
+    .contact-item { display: flex; align-items: center; gap: 16px; padding: 22px; }
+    .contact-item .ico { flex: none; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: rgba(139, 92, 246, .14); color: var(--accent-2); }
+    .contact-item .ico svg { width: 22px; height: 22px; }
+    .contact-item small { display: block; color: var(--muted); font-size: 13px; }
+    .contact-item b { font-weight: 600; font-size: 15px; word-break: break-all; }
+
+    footer { padding: 32px 0; border-top: 1px solid var(--border); color: var(--muted); font-size: 14px; }
+    footer .wrap { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+    footer a:hover { color: var(--accent-2); }
+
+    /* scroll reveal */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+
+    @keyframes fade-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+    @keyframes bob { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 8px); } }
+
+    @media (max-width: 860px) {
+      .about-grid { grid-template-columns: 1fr; }
+      .links {
+        position: absolute; top: 68px; left: 0; right: 0; flex-direction: column; gap: 0;
+        background: var(--surface-solid); border-bottom: 1px solid var(--border);
+        display: none; padding: 8px 20px 16px;
+      }
+      .links.open { display: flex; }
+      .links a { display: block; padding: 12px 0; font-size: 17px; }
+      .menu-btn { display: grid; }
     }
-    .certs .thumb:hover img { border-color: var(--accent); }
-
-    .about { display: grid; gap: 32px; grid-template-columns: 1.4fr 1fr; }
-    .about p { color: var(--muted); margin-bottom: 14px; }
-    .skills h3 { font-size: 14px; margin-bottom: 8px; }
-    .skills ul { list-style: none; margin-bottom: 18px; display: flex; flex-wrap: wrap; gap: 6px; }
-    .skills li { font-size: 13px; padding: 3px 10px; border: 1px solid var(--border); border-radius: 6px; color: var(--muted); }
-
-    .contact p { color: var(--muted); margin-bottom: 20px; max-width: 520px; }
-    footer { padding: 32px 0 48px; color: var(--faint); font-size: 13px; border-top: 1px solid var(--border); }
-
-    @media (max-width: 640px) {
-      nav ul { gap: 14px; }
-      header { padding: 64px 0 48px; }
-      .about { grid-template-columns: 1fr; }
+    @media (max-width: 400px) {
+      .projects-grid, .certs-grid { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .reveal { opacity: 1; transform: none; }
+      html { scroll-behavior: auto; }
     }
   </style>
 </head>
 <body>
 
-<nav>
+<canvas id="stars" aria-hidden="true"></canvas>
+
+<nav id="nav">
   <div class="wrap">
-    <a class="logo" href="#">Justin Dave</a>
-    <ul>
+    <a class="logo" href="#home"><span>Justin Dave</span> Portfolio</a>
+    <ul class="links" id="links">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
       <li><a href="#projects">Projects</a></li>
       <li><a href="#certificates">Certificates</a></li>
-      <li><a href="#about">About</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
+    <div class="nav-right">
+      <button class="icon-btn theme-btn" id="theme-btn" aria-label="Toggle light and dark mode">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn menu-btn" id="menu-btn" aria-label="Open menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
   </div>
 </nav>
 
-<main class="wrap">
-  <header>
-    <p class="eyebrow">Hi, I'm</p>
-    <h1>Justin Dave A. Monsales</h1>
-    <p class="lead">Just a normal guy with a big dream.</p>
-    <div class="btns">
-      <a class="btn primary" href="#projects">See my work</a>
-      <a class="btn" href="https://github.com/Abylon10">GitHub</a>
+<main>
+  <section class="hero" id="home">
+    <div class="wrap">
+      <!-- Profile picture: save your photo as profile.jpg next to this file.
+           Until then, your initials are shown instead. -->
+      <div class="avatar" id="avatar">
+        <img src="profile.jpg" alt="Justin Dave A. Monsales" onerror="this.parentElement.classList.add('no-photo')">
+        <div class="initials" aria-hidden="true">JD</div>
+      </div>
+      <h1>Hi, I'm <span class="accent">Justin Dave</span> Monsales</h1>
+      <p>Just a normal guy with a big dream. I'm a Computer Science student building web GIS tools, mobile apps, games and the occasional distributed-systems experiment.</p>
+      <a class="btn btn-primary" href="#projects">View My Work</a>
     </div>
-  </header>
+    <a class="scroll-hint" href="#about" aria-label="Scroll down">
+      Scroll
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+    </a>
+  </section>
+
+  <section id="about">
+    <div class="wrap">
+      <h2 class="section-title reveal">About <span class="accent">Me</span></h2>
+      <p class="section-sub reveal">A little about who I am and what I build.</p>
+      <div class="about-grid">
+        <div class="about-text reveal">
+          <h3>Computer Science Student &amp; Builder</h3>
+          <p>I'm into gaming, just not game development, at least not for now.</p>
+          <p>Elation is my energy drink. Relapse is my cure for insomnia.</p>
+          <div class="btns">
+            <a class="btn btn-primary" href="#contact">Get In Touch</a>
+            <a class="btn btn-outline" href="https://github.com/Abylon10">GitHub Profile</a>
+          </div>
+        </div>
+        <div class="features">
+          <div class="card feature reveal">
+            <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/><path d="M8 2v16M16 6v16"/></svg></div>
+            <div><h4>Web &amp; GIS</h4><p>Interactive maps and web apps with Next.js, TypeScript and Supabase.</p></div>
+          </div>
+          <div class="card feature reveal">
+            <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg></div>
+            <div><h4>Mobile Apps</h4><p>Cross-platform apps with React Native and Expo.</p></div>
+          </div>
+          <div class="card feature reveal">
+            <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4M7 8l3 3-3 3M13 14h4"/></svg></div>
+            <div><h4>Systems &amp; Data</h4><p>Python for data pipelines, parallel processing and networking.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="wrap">
+      <h2 class="section-title reveal">My <span class="accent">Skills</span></h2>
+      <p class="section-sub reveal">The languages and tools I've used in my projects.</p>
+      <div class="filters reveal" id="filters">
+        <button class="active" data-cat="all">All</button>
+        <button data-cat="lang">Languages</button>
+        <button data-cat="fw">Frameworks</button>
+        <button data-cat="tool">Tools</button>
+      </div>
+      <div class="skills-grid" id="skills-grid">
+        <div class="card skill" data-cat="lang"><b>TypeScript</b><span>Language</span></div>
+        <div class="card skill" data-cat="lang"><b>JavaScript</b><span>Language</span></div>
+        <div class="card skill" data-cat="lang"><b>Python</b><span>Language</span></div>
+        <div class="card skill" data-cat="lang"><b>Luau</b><span>Language</span></div>
+        <div class="card skill" data-cat="fw"><b>Next.js</b><span>Framework</span></div>
+        <div class="card skill" data-cat="fw"><b>React Native</b><span>Framework</span></div>
+        <div class="card skill" data-cat="fw"><b>Expo</b><span>Framework</span></div>
+        <div class="card skill" data-cat="fw"><b>Tailwind CSS</b><span>Framework</span></div>
+        <div class="card skill" data-cat="tool"><b>Supabase</b><span>Tool</span></div>
+        <div class="card skill" data-cat="tool"><b>Git &amp; GitHub</b><span>Tool</span></div>
+        <div class="card skill" data-cat="tool"><b>Vercel</b><span>Tool</span></div>
+        <div class="card skill" data-cat="tool"><b>Rojo</b><span>Tool</span></div>
+      </div>
+    </div>
+  </section>
 
   <section id="projects">
-    <h2>Projects</h2>
-    <div class="projects">
+    <div class="wrap">
+      <h2 class="section-title reveal">Featured <span class="accent">Projects</span></h2>
+      <p class="section-sub reveal">Here are some of my recent projects, from my thesis to class work and personal experiments.</p>
+      <div class="projects-grid">
 
-      <article class="card featured">
-        <span class="kind">Thesis · Web GIS</span>
-        <h3>Biliran GIS</h3>
-        <p>A web-based geographic information system for Biliran province, built as my thesis project. It maps flood susceptibility per barangay and connects to a Supabase backend with email notifications.</p>
-        <div class="tags"><span class="tag">Next.js</span><span class="tag">TypeScript</span><span class="tag">Supabase</span><span class="tag">Tailwind CSS</span><span class="tag">Resend</span></div>
-        <div class="links"><a href="https://github.com/Abylon10/BILIRAN-GIS">View on GitHub →</a></div>
-      </article>
+        <article class="card project reveal">
+          <div class="cover"><div class="art art-gis"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/><path d="M8 2v16M16 6v16"/></svg></div></div>
+          <div class="body">
+            <div class="tags"><span class="tag">Next.js</span><span class="tag">TypeScript</span><span class="tag">Supabase</span><span class="tag">Tailwind</span></div>
+            <h3>Biliran GIS</h3>
+            <p>My thesis project: a web GIS for Biliran province that maps flood susceptibility per barangay, with live rainfall, weather and email alerts.</p>
+            <div class="links-row">
+              <a href="https://github.com/Abylon10/BILIRAN-GIS"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.2-3.1-.1-.4-.5-1.6.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.2.8.8 1.2 1.9 1.2 3.1 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"/></svg>Code</a>
+            </div>
+          </div>
+        </article>
 
-      <article class="card">
-        <span class="kind">Geospatial · Data pipeline</span>
-        <h3>Flood Susceptibility Index Pipeline</h3>
-        <p>Python scripts that compute a weighted flood susceptibility index from HAND, TWI, land cover and rainfall rasters, then aggregate the results by barangay and watershed.</p>
-        <div class="tags"><span class="tag">Python</span><span class="tag">GeoTIFF</span><span class="tag">GeoJSON</span><span class="tag">Hydrology</span></div>
-      </article>
+        <article class="card project reveal">
+          <div class="cover"><img src="img/gardenbound.jpg" alt="Gardenbound spawn island concept map" loading="lazy"></div>
+          <div class="body">
+            <div class="tags"><span class="tag">Luau</span><span class="tag">Roblox</span><span class="tag">Rojo</span></div>
+            <h3>Gardenbound</h3>
+            <p>A Roblox game about farming, pets, alchemy, forging and dungeon combat across six player islands, with the code managed in Git and synced to Studio with Rojo.</p>
+            <div class="links-row">
+              <a href="https://github.com/Abylon10/gardenbound"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.2-3.1-.1-.4-.5-1.6.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.2.8.8 1.2 1.9 1.2 3.1 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"/></svg>Code</a>
+            </div>
+          </div>
+        </article>
 
-      <article class="card">
-        <span class="kind">Mobile app · Group project</span>
-        <h3>Community Connect</h3>
-        <p>A mobile app for discovering local community events and announcements in Naval, Biliran. Built with Expo Router for iOS, Android and web.</p>
-        <div class="tags"><span class="tag">React Native</span><span class="tag">Expo</span><span class="tag">TypeScript</span></div>
-        <div class="links"><a href="https://github.com/Abylon10/COM_NECT">View on GitHub →</a></div>
-      </article>
+        <article class="card project reveal">
+          <div class="cover"><div class="art art-mobile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg></div></div>
+          <div class="body">
+            <div class="tags"><span class="tag">React Native</span><span class="tag">Expo</span><span class="tag">TypeScript</span></div>
+            <h3>Community Connect</h3>
+            <p>A group-project mobile app for discovering local community events and announcements in Naval, Biliran.</p>
+            <div class="links-row">
+              <a href="https://github.com/Abylon10/COM_NECT"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.2-3.1-.1-.4-.5-1.6.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.2.8.8 1.2 1.9 1.2 3.1 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"/></svg>Code</a>
+            </div>
+          </div>
+        </article>
 
-      <article class="card">
-        <span class="kind">Game dev</span>
-        <h3>Gardenbound</h3>
-        <p>A Roblox game about farming, pets, alchemy, forging and dungeon combat across multiple islands, with the code managed in Git and synced to Studio with Rojo.</p>
-        <div class="tags"><span class="tag">Luau</span><span class="tag">Roblox</span><span class="tag">Rojo</span></div>
-        <div class="links"><a href="https://github.com/Abylon10/gardenbound">View on GitHub →</a></div>
-      </article>
+        <article class="card project reveal">
+          <div class="cover"><div class="art art-fsi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.7s-6 6.6-6 11.3a6 6 0 0 0 12 0c0-4.7-6-11.3-6-11.3z"/></svg></div></div>
+          <div class="body">
+            <div class="tags"><span class="tag">Python</span><span class="tag">GeoTIFF</span><span class="tag">Hydrology</span></div>
+            <h3>Flood Susceptibility Pipeline</h3>
+            <p>Python scripts that compute a weighted flood susceptibility index from terrain, land cover and rainfall rasters, then aggregate it by barangay and watershed.</p>
+            <span class="note">Part of the Biliran GIS thesis</span>
+          </div>
+        </article>
 
-      <article class="card">
-        <span class="kind">Parallel computing</span>
-        <h3>Parallel CSV Filter</h3>
-        <p>Divide-and-conquer filtering of CSV files with up to 10 million rows, using a process pool across all CPU cores and benchmarked against a serial version.</p>
-        <div class="tags"><span class="tag">Python</span><span class="tag">multiprocessing</span><span class="tag">Benchmarking</span></div>
-      </article>
+        <article class="card project reveal">
+          <div class="cover"><div class="art art-par"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h4v4H4zM4 16h4v4H4zM16 4h4v4h-4zM16 16h4v4h-4zM8 6h8M8 18h8M6 8v8M18 8v8"/></svg></div></div>
+          <div class="body">
+            <div class="tags"><span class="tag">Python</span><span class="tag">multiprocessing</span><span class="tag">Benchmarking</span></div>
+            <h3>Parallel CSV Filter</h3>
+            <p>Divide-and-conquer filtering of CSV files with up to 10 million rows across all CPU cores, benchmarked against a serial version.</p>
+            <span class="note">Class project</span>
+          </div>
+        </article>
 
-      <article class="card">
-        <span class="kind">Distributed systems</span>
-        <h3>RPC Demo</h3>
-        <p>A small remote procedure call system built from raw sockets: a threaded server, client stubs, JSON marshalling and logging middleware, explained with a restaurant analogy.</p>
-        <div class="tags"><span class="tag">Python</span><span class="tag">Sockets</span><span class="tag">JSON</span><span class="tag">Threading</span></div>
-      </article>
+        <article class="card project reveal">
+          <div class="cover"><div class="art art-rpc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div></div>
+          <div class="body">
+            <div class="tags"><span class="tag">Python</span><span class="tag">Sockets</span><span class="tag">Threading</span></div>
+            <h3>RPC Demo</h3>
+            <p>A remote procedure call system built from raw sockets: a threaded server, client stubs, JSON marshalling and logging middleware.</p>
+            <span class="note">Class project</span>
+          </div>
+        </article>
 
+      </div>
+      <div class="center reveal">
+        <a class="btn btn-primary" href="https://github.com/Abylon10">Check My GitHub →</a>
+      </div>
     </div>
   </section>
 
   <section id="certificates">
-    <h2>Certificates</h2>
-    <ul class="certs">
-      <li>
-        <h3>Introduction to AI Literacy and Responsible Use</h3>
-        <span class="date">Sep 2026</span>
-        <span class="issuer">Mapúa University · CHED ACHIEVE micro-credential</span>
-        <a class="thumb" href="certs/mapua-ai-literacy-2026.jpg"><img src="certs/mapua-ai-literacy-2026.jpg" alt="Certificate of Completion: Introduction to AI Literacy and Responsible Use" loading="lazy"></a>
-      </li>
-      <li>
-        <h3>Networking Basics</h3>
-        <span class="date">May 2026</span>
-        <span class="issuer">Cisco Networking Academy · <a href="https://www.credly.com/badges/b9915208-e30c-4c11-b691-c8b2999dc288">Verify on Credly</a></span>
-        <a class="thumb" href="certs/cisco-networking-basics-2026.jpg"><img src="certs/cisco-networking-basics-2026.jpg" alt="Cisco Networking Academy certificate: Networking Basics" loading="lazy"></a>
-      </li>
-      <li>
-        <h3>Thesis Preparation with the Use of Trending Tools and Industry Practices</h3>
-        <span class="date">Oct 2025</span>
-        <span class="issuer">Biliran Province State University, Computer Science Society · Seminar-Workshop</span>
-        <a class="thumb" href="certs/thesis-prep-2025.jpg"><img src="certs/thesis-prep-2025.jpg" alt="Certificate of Completion: Thesis Preparation with the Use of Trending Tools and Industry Practices" loading="lazy"></a>
-      </li>
-      <li>
-        <h3>Mastering English Foundations, Upholding Academic Integrity, and Advancing Gender-Fair Writing</h3>
-        <span class="date">Apr 2025</span>
-        <span class="issuer">Biliran Province State University, Computer Science Society · Seminar-Workshop</span>
-        <a class="thumb" href="certs/english-seminar-2025.jpg"><img src="certs/english-seminar-2025.jpg" alt="Certificate of Completion: Mastering English Foundations, Upholding Academic Integrity, and Advancing Gender-Fair Writing" loading="lazy"></a>
-      </li>
-      <li>
-        <h3>Unplug &amp; Unwind: Redefining Digital Connection and Safe Spaces</h3>
-        <span class="date">Feb 2024</span>
-        <span class="issuer">Biliran Province State University, Computer Science Society · Certificate of Participation</span>
-        <a class="thumb" href="certs/digital-wellness-2024.jpg"><img src="certs/digital-wellness-2024.jpg" alt="Certificate of Participation: Unplug &amp; Unwind: Redefining Digital Connection and Safe Spaces" loading="lazy"></a>
-      </li>
-    </ul>
-  </section>
-
-  <section id="about">
-    <h2>About</h2>
-    <div class="about">
-      <div>
-        <p>I'm into gaming, just not game development, at least not for now.</p>
-        <p>Elation is my energy drink. Relapse is my cure for insomnia.</p>
-      </div>
-      <div class="skills">
-        <h3>Languages</h3>
-        <ul><li>TypeScript</li><li>JavaScript</li><li>Python</li><li>Luau</li></ul>
-        <h3>Frameworks &amp; tools</h3>
-        <ul><li>Next.js</li><li>React Native</li><li>Expo</li><li>Tailwind CSS</li><li>Supabase</li><li>Git</li></ul>
-        <h3>Interests</h3>
-        <ul><li>GIS</li><li>Mobile</li><li>Gaming</li><li>Parallel &amp; distributed systems</li></ul>
+    <div class="wrap">
+      <h2 class="section-title reveal">My <span class="accent">Certificates</span></h2>
+      <p class="section-sub reveal">Courses and seminars I've completed. Click a certificate to view it full size.</p>
+      <div class="certs-grid">
+        <div class="card cert reveal" data-full="certs/mapua-ai-literacy-2026.jpg" tabindex="0" role="button">
+          <div class="cover"><img src="certs/mapua-ai-literacy-2026.jpg" alt="Certificate of Completion: Introduction to AI Literacy and Responsible Use" loading="lazy"></div>
+          <div class="body">
+            <h3>Introduction to AI Literacy and Responsible Use</h3>
+            <div class="meta">Mapúa University · CHED ACHIEVE micro-credential · Sep 2026</div>
+          </div>
+        </div>
+        <div class="card cert reveal" data-full="certs/cisco-networking-basics-2026.jpg" tabindex="0" role="button">
+          <div class="cover"><img src="certs/cisco-networking-basics-2026.jpg" alt="Cisco Networking Academy certificate: Networking Basics" loading="lazy"></div>
+          <div class="body">
+            <h3>Networking Basics</h3>
+            <div class="meta">Cisco Networking Academy · May 2026</div>
+            <a class="verify" href="https://www.credly.com/badges/b9915208-e30c-4c11-b691-c8b2999dc288">Verify on Credly →</a>
+          </div>
+        </div>
+        <div class="card cert reveal" data-full="certs/thesis-prep-2025.jpg" tabindex="0" role="button">
+          <div class="cover"><img src="certs/thesis-prep-2025.jpg" alt="Certificate of Completion: Thesis Preparation with the Use of Trending Tools and Industry Practices" loading="lazy"></div>
+          <div class="body">
+            <h3>Thesis Preparation with the Use of Trending Tools and Industry Practices</h3>
+            <div class="meta">BiPSU Computer Science Society · Seminar-Workshop · Oct 2025</div>
+          </div>
+        </div>
+        <div class="card cert reveal" data-full="certs/english-seminar-2025.jpg" tabindex="0" role="button">
+          <div class="cover"><img src="certs/english-seminar-2025.jpg" alt="Certificate of Completion: Mastering English Foundations, Upholding Academic Integrity, and Advancing Gender-Fair Writing" loading="lazy"></div>
+          <div class="body">
+            <h3>Mastering English Foundations, Upholding Academic Integrity, and Advancing Gender-Fair Writing</h3>
+            <div class="meta">BiPSU Computer Science Society · Seminar-Workshop · Apr 2025</div>
+          </div>
+        </div>
+        <div class="card cert reveal" data-full="certs/digital-wellness-2024.jpg" tabindex="0" role="button">
+          <div class="cover"><img src="certs/digital-wellness-2024.jpg" alt="Certificate of Participation: Unplug &amp; Unwind: Redefining Digital Connection and Safe Spaces" loading="lazy"></div>
+          <div class="body">
+            <h3>Unplug &amp; Unwind: Redefining Digital Connection and Safe Spaces</h3>
+            <div class="meta">BiPSU Computer Science Society · Certificate of Participation · Feb 2024</div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <section id="contact" class="contact">
-    <h2>Contact</h2>
-    <p>Open to internships, collaborations and freelance work. The best way to reach me is email.</p>
-    <div class="btns">
-      <a class="btn primary" href="mailto:jdavemonsales@gmail.com">Email me</a>
-      <a class="btn" href="https://github.com/Abylon10">GitHub</a>
+  <section id="contact">
+    <div class="wrap">
+      <h2 class="section-title reveal">Get In <span class="accent">Touch</span></h2>
+      <p class="section-sub reveal">Open to internships, collaborations and freelance work. Feel free to reach out.</p>
+      <div class="contact-grid">
+        <a class="card contact-item reveal" href="mailto:jdavemonsales@gmail.com">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg></div>
+          <div><small>Email</small><b>jdavemonsales@gmail.com</b></div>
+        </a>
+        <a class="card contact-item reveal" href="https://github.com/Abylon10">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.2-3.1-.1-.4-.5-1.6.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.2.8.8 1.2 1.9 1.2 3.1 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"/></svg></div>
+          <div><small>GitHub</small><b>github.com/Abylon10</b></div>
+        </a>
+      </div>
     </div>
   </section>
 </main>
 
 <footer>
-  <div class="wrap">© 2026 Justin Dave A. Monsales · Hosted on GitHub Pages</div>
+  <div class="wrap">
+    <span>© 2026 Justin Dave A. Monsales. All rights reserved.</span>
+    <a href="#home">Back to top ↑</a>
+  </div>
 </footer>
 
+<dialog id="viewer">
+  <button class="icon-btn close" id="viewer-close" aria-label="Close">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+  <img id="viewer-img" alt="">
+</dialog>
+
+<script>
+  // ---------- starfield with shooting stars ----------
+  (function () {
+    var canvas = document.getElementById('stars');
+    var ctx = canvas.getContext('2d');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var stars = [], meteors = [], w, h, dpr;
+
+    function resize() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = canvas.width = innerWidth * dpr;
+      h = canvas.height = innerHeight * dpr;
+      canvas.style.width = innerWidth + 'px';
+      canvas.style.height = innerHeight + 'px';
+      var count = Math.floor((innerWidth * innerHeight) / 5000);
+      stars = [];
+      for (var i = 0; i < count; i++) {
+        stars.push({
+          x: Math.random() * w, y: Math.random() * h,
+          r: (Math.random() * 1.2 + 0.3) * dpr,
+          a: Math.random(), s: Math.random() * 0.015 + 0.003
+        });
+      }
+    }
+
+    function starColor() {
+      return getComputedStyle(document.documentElement).getPropertyValue('--star').trim();
+    }
+
+    function spawnMeteor() {
+      meteors.push({
+        x: Math.random() * w * 0.7 + w * 0.3, y: Math.random() * h * 0.4,
+        len: (Math.random() * 80 + 80) * dpr, speed: (Math.random() * 6 + 8) * dpr, life: 1
+      });
+    }
+
+    function frame() {
+      var rgb = starColor();
+      ctx.clearRect(0, 0, w, h);
+      for (var i = 0; i < stars.length; i++) {
+        var st = stars[i];
+        st.a += st.s;
+        var alpha = 0.35 + Math.abs(Math.sin(st.a)) * 0.65;
+        ctx.beginPath();
+        ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(' + rgb + ',' + alpha + ')';
+        ctx.fill();
+      }
+      for (var j = meteors.length - 1; j >= 0; j--) {
+        var m = meteors[j];
+        var g = ctx.createLinearGradient(m.x, m.y, m.x + m.len, m.y - m.len * 0.45);
+        g.addColorStop(0, 'rgba(' + rgb + ',' + m.life + ')');
+        g.addColorStop(1, 'rgba(' + rgb + ',0)');
+        ctx.strokeStyle = g;
+        ctx.lineWidth = 2 * dpr;
+        ctx.beginPath();
+        ctx.moveTo(m.x, m.y);
+        ctx.lineTo(m.x + m.len, m.y - m.len * 0.45);
+        ctx.stroke();
+        m.x -= m.speed; m.y += m.speed * 0.45; m.life -= 0.012;
+        if (m.life <= 0) meteors.splice(j, 1);
+      }
+      if (Math.random() < 0.012 && meteors.length < 3) spawnMeteor();
+      requestAnimationFrame(frame);
+    }
+
+    resize();
+    addEventListener('resize', resize);
+    if (reduce) {
+      var rgb = starColor();
+      stars.forEach(function (st) {
+        ctx.beginPath(); ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(' + rgb + ',.7)'; ctx.fill();
+      });
+    } else {
+      requestAnimationFrame(frame);
+    }
+  })();
+
+  // ---------- nav: background on scroll, mobile menu ----------
+  var nav = document.getElementById('nav');
+  addEventListener('scroll', function () { nav.classList.toggle('scrolled', scrollY > 20); }, { passive: true });
+  var links = document.getElementById('links');
+  var menuBtn = document.getElementById('menu-btn');
+  menuBtn.addEventListener('click', function () {
+    var open = links.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', open);
+  });
+  links.addEventListener('click', function (e) {
+    if (e.target.tagName === 'A') { links.classList.remove('open'); menuBtn.setAttribute('aria-expanded', false); }
+  });
+
+  // ---------- theme toggle ----------
+  document.getElementById('theme-btn').addEventListener('click', function () {
+    var root = document.documentElement;
+    var next = root.dataset.theme === 'light' ? 'dark' : 'light';
+    root.dataset.theme = next;
+    try { localStorage.setItem('theme', next); } catch (e) {}
+  });
+
+  // ---------- skill filters ----------
+  document.getElementById('filters').addEventListener('click', function (e) {
+    var btn = e.target.closest('button');
+    if (!btn) return;
+    this.querySelectorAll('button').forEach(function (b) { b.classList.toggle('active', b === btn); });
+    var cat = btn.dataset.cat;
+    document.querySelectorAll('#skills-grid .skill').forEach(function (s) {
+      s.hidden = cat !== 'all' && s.dataset.cat !== cat;
+    });
+  });
+
+  // ---------- certificate viewer ----------
+  var viewer = document.getElementById('viewer');
+  var viewerImg = document.getElementById('viewer-img');
+  function openCert(card) {
+    viewerImg.src = card.dataset.full;
+    viewerImg.alt = card.querySelector('img').alt;
+    viewer.showModal();
+  }
+  document.querySelectorAll('.cert').forEach(function (card) {
+    card.addEventListener('click', function (e) { if (!e.target.closest('a')) openCert(card); });
+    card.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCert(card); } });
+  });
+  document.getElementById('viewer-close').addEventListener('click', function () { viewer.close(); });
+  viewer.addEventListener('click', function (e) { if (e.target === viewer) viewer.close(); });
+
+  // ---------- reveal on scroll ----------
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+</script>
 </body>
 </html>
