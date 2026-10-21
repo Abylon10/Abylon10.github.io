@@ -86,6 +86,17 @@
     .tag { font-size: 12px; padding: 2px 9px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
     .card .links { font-size: 14px; font-weight: 500; }
 
+    .certs { list-style: none; }
+    .certs li {
+      display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; align-items: baseline;
+      padding: 16px 0; border-bottom: 1px solid var(--border);
+    }
+    .certs li:first-child { padding-top: 0; }
+    .certs li:last-child { border-bottom: none; }
+    .certs h3 { font-size: 16px; font-weight: 600; }
+    .certs .issuer { color: var(--muted); font-size: 14px; grid-column: 1; }
+    .certs .date { color: var(--faint); font-size: 13px; font-family: "JetBrains Mono", monospace; grid-row: 1; grid-column: 2; white-space: nowrap; }
+
     .about { display: grid; gap: 32px; grid-template-columns: 1.4fr 1fr; }
     .about p { color: var(--muted); margin-bottom: 14px; }
     .skills h3 { font-size: 14px; margin-bottom: 8px; }
@@ -109,6 +120,7 @@
     <a class="logo" href="#">Justin Dave</a>
     <ul>
       <li><a href="#projects">Projects</a></li>
+      <li><a href="#certificates">Certificates</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
@@ -176,6 +188,37 @@
       </article>
 
     </div>
+  </section>
+
+  <section id="certificates">
+    <h2>Certificates</h2>
+    <ul class="certs">
+      <li>
+        <h3>Introduction to AI Literacy and Responsible Use</h3>
+        <span class="date">Sep 2026</span>
+        <span class="issuer">Mapúa University · OpenLearning</span>
+      </li>
+      <li>
+        <h3>Networking Basics</h3>
+        <span class="date">May 2026</span>
+        <span class="issuer">Cisco Networking Academy · Certificate of Completion</span>
+      </li>
+      <li>
+        <h3>Thesis Preparation with the Use of Trending Tools and Industry Practices</h3>
+        <span class="date">Oct 2025</span>
+        <span class="issuer">Biliran Province State University, Computer Science Society · Seminar-Workshop</span>
+      </li>
+      <li>
+        <h3>Mastering English Foundations, Upholding Academic Integrity, and Advancing Gender-Fair Writing</h3>
+        <span class="date">Apr 2025</span>
+        <span class="issuer">Seminar-Workshop · Certificate of Completion</span>
+      </li>
+      <li>
+        <h3>Digital Wellness: Connect Smarter, Stay Safer</h3>
+        <span class="date">Feb 2024</span>
+        <span class="issuer">Biliran Province State University · Seminar</span>
+      </li>
+    </ul>
   </section>
 
   <section id="about">
