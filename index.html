@@ -14,30 +14,40 @@
   </script>
   <style>
     :root {
-      --bg: #05060f;
-      --surface: rgba(17, 20, 38, .72);
-      --surface-solid: #0e1124;
-      --text: #eef0f8;
-      --muted: #9ba1b8;
-      --border: rgba(255, 255, 255, .09);
-      --accent: #8b5cf6;
-      --accent-2: #a78bfa;
-      --accent-glow: rgba(139, 92, 246, .45);
-      --star: 255, 255, 255;
-      --nav-bg: rgba(5, 6, 15, .7);
+      --bg: #030a14;
+      --surface: rgba(7, 19, 32, .74);
+      --surface-solid: #07131f;
+      --text: #e8f4fb;
+      --muted: #94a9b8;
+      --border: rgba(120, 200, 255, .12);
+      --accent: #22d3ee;
+      --accent-2: #67e8f9;
+      --accent-rgb: 34, 211, 238;
+      --accent-glow: rgba(34, 211, 238, .4);
+      --copper: #f0a27a;
+      --on-accent: #03141c;
+      --fx-a: 103, 232, 249;
+      --fx-b: 240, 162, 122;
+      --nav-bg: rgba(3, 10, 20, .72);
+      --bg-shade: linear-gradient(180deg, rgba(3, 10, 20, .5), rgba(3, 10, 20, .8));
     }
     :root[data-theme="light"] {
-      --bg: #f5f6fb;
-      --surface: rgba(255, 255, 255, .85);
+      --bg: #eef5f9;
+      --surface: rgba(255, 255, 255, .86);
       --surface-solid: #ffffff;
-      --text: #14162b;
-      --muted: #5b6078;
-      --border: rgba(20, 22, 43, .1);
-      --accent: #7c3aed;
-      --accent-2: #6d28d9;
-      --accent-glow: rgba(124, 58, 237, .3);
-      --star: 124, 58, 237;
-      --nav-bg: rgba(245, 246, 251, .8);
+      --text: #0b1b26;
+      --muted: #4d6475;
+      --border: rgba(11, 27, 38, .1);
+      --accent: #0891b2;
+      --accent-2: #0e7490;
+      --accent-rgb: 8, 145, 178;
+      --accent-glow: rgba(8, 145, 178, .3);
+      --copper: #c2410c;
+      --on-accent: #ffffff;
+      --fx-a: 8, 145, 178;
+      --fx-b: 194, 65, 12;
+      --nav-bg: rgba(238, 245, 249, .82);
+      --bg-shade: linear-gradient(180deg, rgba(238, 245, 249, .86), rgba(238, 245, 249, .94));
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -55,7 +65,24 @@
     .accent { color: var(--accent-2); }
     .wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; position: relative; }
 
-    #stars { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+    /* ---------- animated circuit background ---------- */
+    #bg {
+      position: fixed; inset: -6%; z-index: -3; pointer-events: none;
+      background: url(img/bg.jpg) center / cover no-repeat;
+      animation: drift 40s ease-in-out infinite alternate;
+    }
+    .bg-shade {
+      position: fixed; inset: 0; z-index: -2; pointer-events: none;
+      background: radial-gradient(ellipse at center, transparent 35%, rgba(3, 10, 20, .55) 100%), var(--bg-shade);
+      transition: background .3s;
+    }
+    :root[data-theme="light"] .bg-shade { background: var(--bg-shade); }
+    #fx { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+    @keyframes drift {
+      0%   { transform: scale(1) translate(0, 0); filter: brightness(.85); }
+      50%  { filter: brightness(1.1); }
+      100% { transform: scale(1.12) translate(-2.5%, 1.5%); filter: brightness(.9); }
+    }
 
     /* ---------- nav ---------- */
     nav {
@@ -86,7 +113,7 @@
     .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 100px 0 60px; }
     .avatar {
       width: 150px; height: 150px; margin: 0 auto 28px; border-radius: 50%; position: relative;
-      padding: 4px; background: linear-gradient(135deg, var(--accent), #22d3ee);
+      padding: 4px; background: linear-gradient(135deg, var(--accent), var(--copper));
       box-shadow: 0 0 40px var(--accent-glow);
       animation: fade-up .8s ease both;
     }
@@ -117,7 +144,7 @@
       font-weight: 600; font-size: 15px; cursor: pointer; transition: transform .2s, box-shadow .2s, background .2s;
       border: 1px solid transparent;
     }
-    .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 0 22px var(--accent-glow); }
+    .btn-primary { background: var(--accent); color: var(--on-accent); box-shadow: 0 0 22px var(--accent-glow); }
     .btn-primary:hover { transform: scale(1.05); box-shadow: 0 0 34px var(--accent-glow); }
 
     /* ---------- sections ---------- */
@@ -128,7 +155,7 @@
       background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
       backdrop-filter: blur(6px); transition: transform .25s, box-shadow .25s, border-color .25s;
     }
-    .card:hover { transform: translateY(-4px); border-color: rgba(139, 92, 246, .45); box-shadow: 0 12px 34px rgba(0, 0, 0, .25), 0 0 0 1px rgba(139, 92, 246, .15); }
+    .card:hover { transform: translateY(-4px); border-color: rgba(var(--accent-rgb), .5); box-shadow: 0 12px 34px rgba(0, 0, 0, .25), 0 0 24px rgba(var(--accent-rgb), .18); }
 
     /* about */
     .about-text { text-align: center; max-width: 760px; margin: 0 auto 56px; }
@@ -138,7 +165,7 @@
     .feature { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 30px 24px; text-align: center; }
     .feature .ico {
       flex: none; width: 60px; height: 60px; border-radius: 50%; display: grid; place-items: center;
-      background: rgba(139, 92, 246, .14); color: var(--accent-2);
+      background: rgba(var(--accent-rgb), .14); color: var(--accent-2);
     }
     .feature .ico svg { width: 26px; height: 26px; }
     .feature h4 { font-size: 20px; margin-bottom: 6px; }
@@ -150,7 +177,7 @@
       padding: 8px 20px; border-radius: 999px; border: none; cursor: pointer; font: inherit; font-size: 14px;
       background: var(--surface); color: var(--muted); border: 1px solid var(--border);
     }
-    .filters button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .filters button.active { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
     .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px; }
     .skill { padding: 20px; text-align: center; }
     .skill b { display: block; font-size: 16px; }
@@ -205,7 +232,7 @@
     /* contact */
     .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; max-width: 720px; margin: 0 auto; }
     .contact-item { display: flex; align-items: center; gap: 16px; padding: 22px; }
-    .contact-item .ico { flex: none; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: rgba(139, 92, 246, .14); color: var(--accent-2); }
+    .contact-item .ico { flex: none; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: rgba(var(--accent-rgb), .14); color: var(--accent-2); }
     .contact-item .ico svg { width: 22px; height: 22px; }
     .contact-item small { display: block; color: var(--muted); font-size: 13px; }
     .contact-item b { font-weight: 600; font-size: 15px; word-break: break-all; }
@@ -244,7 +271,9 @@
 </head>
 <body>
 
-<canvas id="stars" aria-hidden="true"></canvas>
+<div id="bg" aria-hidden="true"></div>
+<div class="bg-shade" aria-hidden="true"></div>
+<canvas id="fx" aria-hidden="true"></canvas>
 
 <nav id="nav">
   <div class="wrap">
@@ -498,12 +527,20 @@
 </dialog>
 
 <script>
-  // ---------- starfield with shooting stars ----------
+  // ---------- circuit FX: data pulses along traces + drifting particles ----------
   (function () {
-    var canvas = document.getElementById('stars');
+    var canvas = document.getElementById('fx');
     var ctx = canvas.getContext('2d');
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var stars = [], meteors = [], w, h, dpr;
+    var particles = [], pulses = [], w, h, dpr, colA, colB;
+    // Pulses travel like PCB traces: straight runs with 45° bends.
+    var DIRS = [[1, 0], [0.7071, -0.7071], [0, -1], [-0.7071, -0.7071], [-1, 0], [-0.7071, 0.7071], [0, 1], [0.7071, 0.7071]];
+
+    function readColors() {
+      var cs = getComputedStyle(document.documentElement);
+      colA = cs.getPropertyValue('--fx-a').trim();
+      colB = cs.getPropertyValue('--fx-b').trim();
+    }
 
     function resize() {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -511,69 +548,105 @@
       h = canvas.height = innerHeight * dpr;
       canvas.style.width = innerWidth + 'px';
       canvas.style.height = innerHeight + 'px';
-      var count = Math.floor((innerWidth * innerHeight) / 5000);
-      stars = [];
+      var count = Math.floor((innerWidth * innerHeight) / 14000);
+      particles = [];
       for (var i = 0; i < count; i++) {
-        stars.push({
+        particles.push({
           x: Math.random() * w, y: Math.random() * h,
-          r: (Math.random() * 1.2 + 0.3) * dpr,
-          a: Math.random(), s: Math.random() * 0.015 + 0.003
+          r: (Math.random() * 1.6 + 0.5) * dpr,
+          vy: -(Math.random() * 0.25 + 0.05) * dpr,
+          vx: (Math.random() - 0.5) * 0.15 * dpr,
+          a: Math.random() * 6.28, s: Math.random() * 0.02 + 0.005,
+          copper: Math.random() < 0.3
         });
       }
     }
 
-    function starColor() {
-      return getComputedStyle(document.documentElement).getPropertyValue('--star').trim();
+    function spawnPulse() {
+      // Start at the left or bottom edge, heading right / up-right / up.
+      var fromLeft = Math.random() < 0.5;
+      pulses.push({
+        x: fromLeft ? 0 : Math.random() * w,
+        y: fromLeft ? Math.random() * h : h,
+        dir: fromLeft ? (Math.random() < 0.5 ? 0 : 1) : (Math.random() < 0.5 ? 1 : 2),
+        run: (Math.random() * 120 + 60) * dpr,
+        speed: (Math.random() * 2 + 2.5) * dpr,
+        trail: [],
+        copper: Math.random() < 0.3
+      });
     }
 
-    function spawnMeteor() {
-      meteors.push({
-        x: Math.random() * w * 0.7 + w * 0.3, y: Math.random() * h * 0.4,
-        len: (Math.random() * 80 + 80) * dpr, speed: (Math.random() * 6 + 8) * dpr, life: 1
-      });
+    function step(p) {
+      var d = DIRS[p.dir];
+      p.x += d[0] * p.speed;
+      p.y += d[1] * p.speed;
+      p.run -= p.speed;
+      if (p.run <= 0) {
+        // Bend 45° left or right, but never head back toward the start edge.
+        var next = (p.dir + (Math.random() < 0.5 ? 1 : 7)) % 8;
+        if (next === 0 || next === 1 || next === 2) p.dir = next;
+        p.run = (Math.random() * 140 + 50) * dpr;
+      }
+      p.trail.push(p.x, p.y);
+      if (p.trail.length > 60) p.trail.splice(0, 2);
+    }
+
+    function drawPulse(p) {
+      var rgb = p.copper ? colB : colA, t = p.trail, n = t.length / 2;
+      ctx.lineWidth = 1.6 * dpr;
+      ctx.lineCap = 'round';
+      for (var i = 1; i < n; i++) {
+        ctx.strokeStyle = 'rgba(' + rgb + ',' + (i / n) * 0.8 + ')';
+        ctx.beginPath();
+        ctx.moveTo(t[(i - 1) * 2], t[(i - 1) * 2 + 1]);
+        ctx.lineTo(t[i * 2], t[i * 2 + 1]);
+        ctx.stroke();
+      }
+      ctx.shadowColor = 'rgba(' + rgb + ',1)';
+      ctx.shadowBlur = 14 * dpr;
+      ctx.fillStyle = 'rgba(' + rgb + ',1)';
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 2.4 * dpr, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    function drawParticles(move) {
+      for (var i = 0; i < particles.length; i++) {
+        var q = particles[i];
+        if (move) {
+          q.x += q.vx; q.y += q.vy; q.a += q.s;
+          if (q.y < -10) { q.y = h + 10; q.x = Math.random() * w; }
+          if (q.x < -10) q.x = w + 10; else if (q.x > w + 10) q.x = -10;
+        }
+        var alpha = 0.25 + Math.abs(Math.sin(q.a)) * 0.6;
+        ctx.fillStyle = 'rgba(' + (q.copper ? colB : colA) + ',' + alpha + ')';
+        ctx.beginPath();
+        ctx.arc(q.x, q.y, q.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
 
     function frame() {
-      var rgb = starColor();
       ctx.clearRect(0, 0, w, h);
-      for (var i = 0; i < stars.length; i++) {
-        var st = stars[i];
-        st.a += st.s;
-        var alpha = 0.35 + Math.abs(Math.sin(st.a)) * 0.65;
-        ctx.beginPath();
-        ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(' + rgb + ',' + alpha + ')';
-        ctx.fill();
+      drawParticles(true);
+      for (var j = pulses.length - 1; j >= 0; j--) {
+        var p = pulses[j];
+        step(p);
+        drawPulse(p);
+        if (p.x > w + 40 || p.y < -40) pulses.splice(j, 1);
       }
-      for (var j = meteors.length - 1; j >= 0; j--) {
-        var m = meteors[j];
-        var g = ctx.createLinearGradient(m.x, m.y, m.x + m.len, m.y - m.len * 0.45);
-        g.addColorStop(0, 'rgba(' + rgb + ',' + m.life + ')');
-        g.addColorStop(1, 'rgba(' + rgb + ',0)');
-        ctx.strokeStyle = g;
-        ctx.lineWidth = 2 * dpr;
-        ctx.beginPath();
-        ctx.moveTo(m.x, m.y);
-        ctx.lineTo(m.x + m.len, m.y - m.len * 0.45);
-        ctx.stroke();
-        m.x -= m.speed; m.y += m.speed * 0.45; m.life -= 0.012;
-        if (m.life <= 0) meteors.splice(j, 1);
-      }
-      if (Math.random() < 0.012 && meteors.length < 3) spawnMeteor();
+      if (Math.random() < 0.035 && pulses.length < 7) spawnPulse();
       requestAnimationFrame(frame);
     }
 
+    readColors();
     resize();
-    addEventListener('resize', resize);
-    if (reduce) {
-      var rgb = starColor();
-      stars.forEach(function (st) {
-        ctx.beginPath(); ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(' + rgb + ',.7)'; ctx.fill();
-      });
-    } else {
-      requestAnimationFrame(frame);
-    }
+    addEventListener('resize', function () { resize(); if (reduce) drawParticles(false); });
+    new MutationObserver(function () { readColors(); if (reduce) { ctx.clearRect(0, 0, w, h); drawParticles(false); } })
+      .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    if (reduce) drawParticles(false);
+    else requestAnimationFrame(frame);
   })();
 
   // ---------- nav: background on scroll, mobile menu ----------
