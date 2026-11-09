@@ -172,17 +172,10 @@
     .feature p { color: var(--muted); font-size: 16px; }
 
     /* skills */
-    .filters { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-bottom: 36px; }
-    .filters button {
-      padding: 8px 20px; border-radius: 999px; border: none; cursor: pointer; font: inherit; font-size: 14px;
-      background: var(--surface); color: var(--muted); border: 1px solid var(--border);
-    }
-    .filters button.active { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
-    .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px; }
-    .skill { padding: 20px; text-align: center; }
-    .skill b { display: block; font-size: 16px; }
-    .skill span { color: var(--muted); font-size: 13px; }
-    .skill[hidden] { display: none; }
+    .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .skill { padding: 32px 24px; text-align: center; }
+    .skill b { display: block; font-size: 24px; margin-bottom: 8px; color: var(--accent-2); }
+    .skill span { color: var(--muted); font-size: 16px; }
 
     /* projects */
     .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
@@ -230,12 +223,12 @@
     dialog .close { position: fixed; top: 16px; right: 16px; color: #fff; background: rgba(255, 255, 255, .12); }
 
     /* contact */
-    .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; max-width: 720px; margin: 0 auto; }
+    .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; max-width: 1020px; margin: 0 auto; }
     .contact-item { display: flex; align-items: center; gap: 16px; padding: 22px; }
     .contact-item .ico { flex: none; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: rgba(var(--accent-rgb), .14); color: var(--accent-2); }
     .contact-item .ico svg { width: 22px; height: 22px; }
     .contact-item small { display: block; color: var(--muted); font-size: 13px; }
-    .contact-item b { font-weight: 600; font-size: 15px; word-break: break-all; }
+    .contact-item b { font-weight: 600; font-size: 14.5px; overflow-wrap: anywhere; }
 
     footer { padding: 32px 0; border-top: 1px solid var(--border); color: var(--muted); font-size: 14px; }
     footer .wrap { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
@@ -249,7 +242,7 @@
     @keyframes bob { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 8px); } }
 
     @media (max-width: 860px) {
-      .features { grid-template-columns: 1fr; }
+      .features, .skills-grid { grid-template-columns: 1fr; }
       .links {
         position: absolute; top: 68px; left: 0; right: 0; flex-direction: column; gap: 0;
         background: var(--surface-solid); border-bottom: 1px solid var(--border);
@@ -346,26 +339,11 @@
   <section id="skills">
     <div class="wrap">
       <h2 class="section-title reveal">My <span class="accent">Skills</span></h2>
-      <p class="section-sub reveal">The languages and tools I've used in my projects.</p>
-      <div class="filters reveal" id="filters">
-        <button class="active" data-cat="all">All</button>
-        <button data-cat="lang">Languages</button>
-        <button data-cat="fw">Frameworks</button>
-        <button data-cat="tool">Tools</button>
-      </div>
-      <div class="skills-grid" id="skills-grid">
-        <div class="card skill" data-cat="lang"><b>TypeScript</b><span>Language</span></div>
-        <div class="card skill" data-cat="lang"><b>JavaScript</b><span>Language</span></div>
-        <div class="card skill" data-cat="lang"><b>Python</b><span>Language</span></div>
-        <div class="card skill" data-cat="lang"><b>Luau</b><span>Language</span></div>
-        <div class="card skill" data-cat="fw"><b>Next.js</b><span>Framework</span></div>
-        <div class="card skill" data-cat="fw"><b>React Native</b><span>Framework</span></div>
-        <div class="card skill" data-cat="fw"><b>Expo</b><span>Framework</span></div>
-        <div class="card skill" data-cat="fw"><b>Tailwind CSS</b><span>Framework</span></div>
-        <div class="card skill" data-cat="tool"><b>Supabase</b><span>Tool</span></div>
-        <div class="card skill" data-cat="tool"><b>Git &amp; GitHub</b><span>Tool</span></div>
-        <div class="card skill" data-cat="tool"><b>Vercel</b><span>Tool</span></div>
-        <div class="card skill" data-cat="tool"><b>Rojo</b><span>Tool</span></div>
+      <p class="section-sub reveal">The three skills I use most across my projects.</p>
+      <div class="skills-grid">
+        <div class="card skill reveal"><b>Python</b><span>Data pipelines, parallel processing and networking</span></div>
+        <div class="card skill reveal"><b>TypeScript</b><span>Type-safe web and mobile apps</span></div>
+        <div class="card skill reveal"><b>Next.js</b><span>Full-stack web apps like my thesis GIS</span></div>
       </div>
     </div>
   </section>
@@ -506,6 +484,10 @@
         <a class="card contact-item reveal" href="https://github.com/Abylon10">
           <div class="ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.2-3.1-.1-.4-.5-1.6.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.2.8.8 1.2 1.9 1.2 3.1 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"/></svg></div>
           <div><small>GitHub</small><b>github.com/Abylon10</b></div>
+        </a>
+        <a class="card contact-item reveal" href="https://www.facebook.com/justindave.monsales.98">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12z"/></svg></div>
+          <div><small>Facebook</small><b>Justin Dave Monsales</b></div>
         </a>
       </div>
     </div>
@@ -668,17 +650,6 @@
     var next = root.dataset.theme === 'light' ? 'dark' : 'light';
     root.dataset.theme = next;
     try { localStorage.setItem('theme', next); } catch (e) {}
-  });
-
-  // ---------- skill filters ----------
-  document.getElementById('filters').addEventListener('click', function (e) {
-    var btn = e.target.closest('button');
-    if (!btn) return;
-    this.querySelectorAll('button').forEach(function (b) { b.classList.toggle('active', b === btn); });
-    var cat = btn.dataset.cat;
-    document.querySelectorAll('#skills-grid .skill').forEach(function (s) {
-      s.hidden = cat !== 'all' && s.dataset.cat !== cat;
-    });
   });
 
   // ---------- certificate viewer ----------
