@@ -110,9 +110,9 @@
     .menu-btn { display: none; }
 
     /* ---------- hero ---------- */
-    .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 100px 0 60px; }
+    .hero { position: relative; min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 100px 0 110px; }
     .avatar {
-      width: 150px; height: 150px; margin: 0 auto 28px; border-radius: 50%; position: relative;
+      width: min(450px, 80vw); height: min(450px, 80vw); margin: 0 auto 28px; border-radius: 50%; position: relative;
       padding: 4px; background: linear-gradient(135deg, var(--accent), var(--copper));
       box-shadow: 0 0 40px var(--accent-glow);
       animation: fade-up .8s ease both;
@@ -317,7 +317,6 @@
       <div class="about-text reveal">
         <h3>Computer Science Student &amp; Aspiring Game Developer</h3>
         <p>I've always loved playing games, and now I'm working toward making my own. I'm learning game development and practicing 3D modeling to bring my ideas to life.</p>
-        <p>Elation is my energy drink. Relapse is my cure for insomnia.</p>
       </div>
       <div class="features">
           <div class="card feature reveal">
